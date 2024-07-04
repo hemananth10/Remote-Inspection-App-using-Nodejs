@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content= "width=device-width, user-scalable=no">
+		<title>OurProperty Meeting</title>
+		<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/dist/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="https://cdn.usebootstrap.com/bootstrap/2.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/dist/css/SkyRTC-meeting.css">
+		<script type="text/javascript" src="https://propertymanager.ourtradie.com.au/media/jentla/jquery.js?m=1569809742"></script>
+		<script type="text/javascript" src="https://propertymanager.ourtradie.com.au/templates/ourtradie_new/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="https://propertymanager.ourtradie.com.au/media/knockout/js/knockout-3.5.0.js?m=1569681703"></script>
+		<script type="text/javascript" src="https://propertymanager.ourtradie.com.au/media/knockout/js/knockout-components.js?m=1586008064"></script>
+		<script type="text/javascript" src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+		<script type="text/javascript" src="/dist/js/SkyRTC-client.js"></script>
+		<script type="text/javascript" src="/dist/js/SkyRTC-meeting.js"></script>
+	</head>
+	<body>
+		<div id="system-message-container"></div>
+		<div id="skyrtc_meeting" class="meeting" allow="microphone; camera">
+			<h3 id="meeting-id" data-bind="text: meetingID"></h3>
+			<!-- ko if: isJoined -->
+			<div id="source-controls">
+				<!-- ko if: audioInputs().length > 1 -->
+				<div>
+					<span style="float: left;">Microphone</span>
+					<select style="float: right; margin-left: 5px;" data-bind="options: audioInputs, value: audioInput, optionsText: 'text', optionValue: 'value'"></select>
+				</div>
+				<!-- /ko -->
+				<!-- ko if: videoInputs().length > 2 -->
+				<div>
+					<span style="float: left;">Camera</span>
+					<select style="float: right; margin-left: 5px;" data-bind="options: videoInputs, value: videoInput, optionsText: 'text', optionValue: 'value'"></select>
+				</div>
+				<!-- /ko -->
+				<!-- ko if: audioOutputs().length > 2 -->
+				<div>
+					<span style="float: left;">Speaker</span>
+					<select style="float: right; margin-left: 5px;" data-bind="options: audioOutputs, value: audioOutput, optionsText: 'text', optionValue: 'value'"></select>
+				</div>
+				<!-- /ko -->
+			</div>
+			<!-- /ko -->
+			<div id="main-video" class="row-fluid">
+				<video id="max" autoplay playsinline muted></video>
+			</div>
+			<div id="videos" class="row-fluid videos" data-bind="class: gridView() ? 'on' : 'off'">
+				<video id="me" autoplay playsinline muted></video>
+			</div>
+			<!-- ko if: canJoin -->
+				<div id="confirm-join-div" class="row-fluid controls" data-bind="hidden: isJoined">
+					<div>Ready to connect<span id="confirm-join-room-span"></span>?</div>
+					<button id="confirm-join-button" data-bind="click: connect, disable: isJoining">CONNECT</button>
+				</div>
+				<!-- ko if: isJoined -->
+				<div id="joined-div" class="row-fluid controls">
+					<svg id="switch-view" data-bind="click: toggleView, class: gridView() ? 'on' : 'off'" class="svg-icon" width="48" height="48" viewbox="-10 -10 68 68">
+						<title>Title</title>
+						<circle cx="24" cy="24" r="34">
+							<title>Change view</title>
+						</circle>
+						<path transform="scale(1.3), translate(7,6)" fill="white" d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM8 20H5c-.55 0-1-.45-1-1v-3h4v4zm0-6H4v-4h4v4zm0-6H4V5c0-.55.45-1 1-1h3v4zm6 12h-4v-4h4v4zm0-6h-4v-4h4v4zm0-6h-4V4h4v4zm5 12h-3v-4h4v3c0 .55-.45 1-1 1zm1-6h-4v-4h4v4zm0-6h-4V4h3c.55 0 1 .45 1 1v3z"/>
+					</svg>
+					<svg id="mute-audio" data-bind="click: toggleAudio, class: hasAudio() ? 'off' : 'on'" width="48" height="48" viewbox="-10 -10 68 68">
+						<title>Title</title>
+						<circle cx="24" cy="24" r="34">
+							<title>Mute audio</title>
+						</circle>
+						<path transform="scale(0.6), translate(17,18)" d="M38 22h-3.4c0 1.49-.31 2.87-.87 4.1l2.46 2.46C37.33 26.61 38 24.38 38 22zm-8.03.33c0-.11.03-.22.03-.33V10c0-3.32-2.69-6-6-6s-6 2.68-6 6v.37l11.97 11.96zM8.55 6L6 8.55l12.02 12.02v1.44c0 3.31 2.67 6 5.98 6 .45 0 .88-.06 1.3-.15l3.32 3.32c-1.43.66-3 1.03-4.62 1.03-5.52 0-10.6-4.2-10.6-10.2H10c0 6.83 5.44 12.47 12 13.44V42h4v-6.56c1.81-.27 3.53-.9 5.08-1.81L39.45 42 42 39.46 8.55 6z" fill="white"/>
+					</svg>
+					<svg id="mute-video" data-bind="click: toggleVideo, class: hasVideo() ? 'off' : 'on'" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+						<circle cx="24" cy="24" r="34">
+							<title>Mute video</title>
+						</circle>
+						<path transform="scale(0.6), translate(17,16)" d="M40 8H15.64l8 8H28v4.36l1.13 1.13L36 16v12.36l7.97 7.97L44 36V12c0-2.21-1.79-4-4-4zM4.55 2L2 4.55l4.01 4.01C4.81 9.24 4 10.52 4 12v24c0 2.21 1.79 4 4 4h29.45l4 4L44 41.46 4.55 2zM12 16h1.45L28 30.55V32H12V16z" fill="white"/>
+					</svg>
+					<!-- ko if: videoInputs().length == 2 -->
+					<svg id="switch-video" data-bind="click: toggleCamera, class: hasBackface() ? 'off' : 'on'" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="-10 -10 68 68">
+						<circle cx="24" cy="24" r="34">
+							<title>Switch video</title>
+						</circle>
+						<path transform="scale(1.3), translate(8,7)" fill="white" d="M18 9.5V6c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v12c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-3.5l2.29 2.29c.63.63 1.71.18 1.71-.71V7.91c0-.89-1.08-1.34-1.71-.71L18 9.5zm-5 6V13H7v2.5l-3.15-3.15c-.2-.2-.2-.51 0-.71L7 8.5V11h6V8.5l3.15 3.15c.2.2.2.51 0 .71L13 15.5z"/>
+					</svg>
+					<!-- /ko -->
+					<svg id="hangup" class="on" data-bind="click: diconnect" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewbox="-10 -10 68 68">
+						<circle cx="24" cy="24" r="34">
+							<title>Hangup</title>
+						</circle>
+						<path transform="scale(0.7), translate(11,10)" d="M24 18c-3.21 0-6.3.5-9.2 1.44v6.21c0 .79-.46 1.47-1.12 1.8-1.95.98-3.74 2.23-5.33 3.7-.36.35-.85.57-1.4.57-.55 0-1.05-.22-1.41-.59L.59 26.18c-.37-.37-.59-.87-.59-1.42 0-.55.22-1.05.59-1.42C6.68 17.55 14.93 14 24 14s17.32 3.55 23.41 9.34c.37.36.59.87.59 1.42 0 .55-.22 1.05-.59 1.41l-4.95 4.95c-.36.36-.86.59-1.41.59-.54 0-1.04-.22-1.4-.57-1.59-1.47-3.38-2.72-5.33-3.7-.66-.33-1.12-1.01-1.12-1.8v-6.21C30.3 18.5 27.21 18 24 18z" fill="white"/>
+					</svg>
+				</div>
+				<!-- /ko -->
+			<!-- /ko -->
+		</div>
+		<script type="text/javascript">
+			$(function () {
+				//SkyRTCMeeting.wssURL = "ws://localhost:3000/wss";
+				SkyRTCMeeting.wssURL = (window.location.protocol == 'https:' ? "wss://" : "ws://") + window.location.hostname + ":" + window.location.port + "/wss";
+				SkyRTCMeeting.meetingID = "general";
+				var arguments = window.location.href.substring(window.location.protocol.length).split('#');
+				if (arguments[1]) {
+					SkyRTCMeeting.meetingID = arguments[1];
+				}
+				SkyRTCMeeting.canJoin(true);
+				ko.applyBindings(SkyRTCMeeting, document.getElementById("skyrtc_meeting"));
+			})
+		</script>
+	</body>
+</html>

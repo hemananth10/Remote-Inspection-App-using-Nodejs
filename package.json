@@ -1,0 +1,14 @@
+{
+	"name": "OurProperty-rtc",
+	"description": "OurProperty Meeting",
+	"main": "server.js",
+	"scripts": {
+		"start": "DEBUG=express:* node server.js"
+	},
+	"dependencies": {
+		"express": "^3.11.0",
+		"minimist": "1.2.5",
+		"node-uuid": ">= 1.4.1",
+		"ws": ">= 0.0.0"
+	}
+}

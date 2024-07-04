@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Webrtc Room</title>
+    <link rel="stylesheet" type="text/css" href="/dist/css/index.css">
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+</head>
+<body>
+<div id="chat">
+    <div class="msgs" id="msgs"></div>
+    <input type="file" id="fileIpt" class="fileIpt">
+    <button id="sendFileBtn" class="sendFileBtn">Upload</button>
+    <input type="text" id="msgIpt" class="msgIpt" title="Message">
+    <button id="sendBtn" class="sendBtn">Send</button>
+</div>
+<div id="videos">
+    <video id="me" autoplay playsinline muted></video>
+</div>
+<div id="files">
+</div>
+<script type="text/javascript" src="/dist/js/SkyRTC-client.js"></script>
+<script type="text/javascript" src="/dist/js/conn.js"></script>
+</body>
+</html>
